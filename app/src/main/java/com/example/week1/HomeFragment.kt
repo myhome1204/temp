@@ -20,7 +20,7 @@ class HomeFragment : Fragment() {
 //        binding.homeAlbumImgIv1.setOnClickListener {
 //            //내가 속하고 있는 activity를 부르기 위한작업 (context as MainActivity)
 //            (context as MainActivity).supportFragmentManager.beginTransaction()
-//                .replace(R.id.main_frm,AlnumFragment())s
+//                .replace(R.id.main_frm,AlbumFragment())
 //                .commitAllowingStateLoss()
 //        }
 //        val bannerAdapter = BannerVPAdapter(this@HomeFragment)
