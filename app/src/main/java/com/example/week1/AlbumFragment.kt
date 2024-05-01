@@ -34,7 +34,6 @@ class AlbumFragment : Fragment() {
         TabLayoutMediator(binding.albumContentTb,binding.albumContentVp){
             tab,position->
             tab.text = information[position]
-
         }.attach()
     }
 }

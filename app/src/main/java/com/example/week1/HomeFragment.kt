@@ -14,9 +14,9 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
+
     ): View? {
         binding = FragmentHomeBinding.inflate(layoutInflater)
-
 //        binding.homeAlbumImgIv1.setOnClickListener {
 //            //내가 속하고 있는 activity를 부르기 위한작업 (context as MainActivity)
 //            (context as MainActivity).supportFragmentManager.beginTransaction()
