@@ -18,12 +18,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        setTheme(R.style.Theme_Week1)
         setContentView(binding.root)
-        val song = Song(binding.mainMiniplayerTitleTv.text.toString(),binding.mainMiniplayerSingerTv.text.toString())
+        val song = Song(binding.mainMiniplayerTitleTv.text.toString(),binding.mainMiniplayerSingerTv.text.toString(),0,60,false)
         binding.mainPlayerCl.setOnClickListener {
             val intent = Intent(this@MainActivity,SongActivity::class.java)
             intent.putExtra("title",song.title)
             intent.putExtra("singer",song.singer)
+            intent.putExtra("second",song.second)
+            intent.putExtra("playTime",song.playTime)
+            intent.putExtra("isPlaying",song.isPlaying)
             startActivity(intent)
 //           startActivity(Intent(this@MainActivity,SongActivity::class.java))
         }
