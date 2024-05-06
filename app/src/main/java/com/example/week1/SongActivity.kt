@@ -55,7 +55,6 @@ class SongActivity : AppCompatActivity() {
         startTimer()
     }
     private fun setPlayer(song : Song){
-
         binding.songMusicTitleTv.text = intent.getStringExtra("title")!!
         binding.songSingerNameTv.text = intent.getStringExtra("singer")!!
         binding.songStartTimeTv.text = String.format("%02d:%02d",song.second/60,song.second%60)

@@ -1,6 +1,8 @@
 package com.example.week1
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +12,10 @@ import com.example.week1.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
     private lateinit var binding:FragmentHomeBinding
+    private var max_num :Int = 2
+    private var runnable: Runnable? = null
+    private var current_page : Int = 0;
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -40,10 +46,30 @@ class HomeFragment : Fragment() {
                 .commitAllowingStateLoss()
         }
         val bannerAdapter = BannerVPAdapter(this@HomeFragment)
+        val panelAdapter  = PanelAdapter(this@HomeFragment)
+        panelAdapter.addLFragment(PanelFragment(R.drawable.img_first_album_default))
+        panelAdapter.addLFragment(PanelFragment(R.drawable.img_first_album_default))
+        binding.homePannelBackgroundIv.adapter = panelAdapter
+        binding.homePannelCircleindicator.setViewPager(binding.homePannelBackgroundIv)
         bannerAdapter.addFragment(BannerFragment(R.drawable.img_home_viewpager_exp))
         bannerAdapter.addFragment(BannerFragment(R.drawable.img_home_viewpager_exp2))
         binding.homeBannerVp.adapter = bannerAdapter
         binding.homeBannerVp.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 
+        val handler = Handler(Looper.getMainLooper())
+        Thread {
+            while (true) {
+                Thread.sleep(2000)
+                // UI 업데이트는 메인 스레드에서만 가능하므로 runOnUiThread를 사용하여 실행
+                activity?.runOnUiThread {
+                    if (current_page == max_num - 1) {
+                        current_page = 0
+                    } else {
+                        current_page++
+                    }
+                    binding.homePannelBackgroundIv.setCurrentItem(current_page, true)
+                }
+            }
+        }.start()
     }
 }

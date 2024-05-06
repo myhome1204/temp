@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("playTime",song.playTime)
             intent.putExtra("isPlaying",song.isPlaying)
             startActivity(intent)
-//           startActivity(Intent(this@MainActivity,SongActivity::class.java))
+//          startActivity(Intent(this@MainActivity,SongActivity::class.java))
         }
         initBottomNavigation()
 
@@ -37,7 +37,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initBottomNavigation(){
-
         supportFragmentManager.beginTransaction()
             .replace(R.id.main_frm, HomeFragment())
             .commitAllowingStateLoss()
