@@ -180,15 +180,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/song_like_iv_layout"  />
 
-    <View
-        android:id="@+id/song_progressbar_view"
-        android:layout_width="50dp"
-        android:layout_height="2dp"
-        android:layout_marginStart="20dp"
-        android:background="@color/select_color"
-        app:layout_constraintBottom_toBottomOf="@+id/song_progress_sb"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/song_progress_sb" />
+<!--    <View-->
+<!--        android:id="@+id/song_progressbar_view"-->
+<!--        android:layout_width="50dp"-->
+<!--        android:layout_height="2dp"-->
+<!--        android:layout_marginStart="20dp"-->
+<!--        android:background="@color/select_color"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/song_progress_sb"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/song_progress_sb" />-->
 
     <TextView
         android:id="@+id/song_start_time_tv"

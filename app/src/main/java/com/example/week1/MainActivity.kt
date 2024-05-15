@@ -56,8 +56,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.lookFragment -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_frm, LookFragment())
+                    supportFragmentManager.beginTransaction()                        .replace(R.id.main_frm, LookFragment())
                         .commitAllowingStateLoss()
                     return@setOnItemSelectedListener true
                 }
