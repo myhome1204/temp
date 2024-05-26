@@ -1,5 +1,6 @@
 package com.example.week1
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,8 +10,7 @@ import androidx.fragment.app.Fragment
 import com.example.week1.databinding.FragmentLockerBinding
 import com.google.android.material.tabs.TabLayoutMediator
 
-class LockerFragment : Fragment() {
-
+class LockFragment: Fragment() {
     lateinit var binding: FragmentLockerBinding
     private val information = arrayListOf("저장한곡", "음악파일", "저장앨범")
 
@@ -23,20 +23,13 @@ class LockerFragment : Fragment() {
 
         val lockerAdapter = LockerVPAdapter(this)
         binding.lockerContentVp.adapter = lockerAdapter
-        TabLayoutMediator(binding.lockerContentTb, binding.lockerContentVp) { tab, position ->
+        TabLayoutMediator(binding.lockerContentTb, binding.lockerContentVp){
+                tab, position ->
             tab.text = information[position]
         }.attach()
 
-        binding.lockerLoginTv.setOnClickListener {
-//            startActivity(Intent(activity, LoginActivity::class.java))
-        }
-
-        val songDB = SongDatabase.getInstance(requireContext())!!
-//        val userId = getJwt()
-//        val likedAlbums = songDB.albumDao().getLikedAlbums(userId)
-
-//        Log.d("LOKERFRAG/GET_ALBUMS", likedAlbums.toString())
-
         return binding.root
     }
+
+
 }

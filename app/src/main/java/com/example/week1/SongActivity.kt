@@ -1,10 +1,10 @@
 package com.example.week1
 
-import android.content.Intent
 
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.BoringLayout
 import android.util.Log
 import android.view.View
 import com.example.week1.databinding.ActivitySongBinding
@@ -12,14 +12,22 @@ import com.google.gson.Gson
 
 class SongActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySongBinding
-    lateinit var song: Song
     lateinit var timer:Timer
     private var mediaPlayer: MediaPlayer? = null
     private var gson : Gson = Gson()
+    var songs  = arrayListOf<Song>()
+    val songDB = SongDatabase.getInstance(this)!!
+    var nowPos = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivitySongBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        initPlayList()
+        initSong()
+        initClickListener()
+    }
+    private fun initClickListener(){
         binding.songDownIb.setOnClickListener {
             finish()
         }
@@ -29,13 +37,45 @@ class SongActivity : AppCompatActivity() {
         binding.songPauseIv.setOnClickListener {
             setPlayerStatus(false)
         }
+        binding.songNextIv.setOnClickListener {
+            moveSong(1)
+        }
+        binding.songPreviousIv.setOnClickListener {
+            moveSong(-1)
+        }
+        binding.songLikeIv.setOnClickListener {
+            setLike(songs[nowPos].isLike)
 
-        initSong()
-        setPlayer(song)
+        }
     }
+    private fun setLike(isLike : Boolean){
+        songs[nowPos].isLike = !isLike
+        songDB.songDao().updateIsLikeById(!isLike,songs[nowPos].id)
+        Log.d("song", "지금 노래의 제목${songs[nowPos].id} 좋아요 상태 :  ${songDB.songDao().getSong(songs[nowPos].id)!!.isLike}")
 
+        if(!isLike){
+            binding.songLikeIv.setImageResource(R.drawable.ic_my_like_on)
+        }else{
+            binding.songLikeIv.setImageResource(R.drawable.ic_my_like_off)
+        }
+    }
+    private fun moveSong(direct : Int){
+        nowPos +=direct
+        if(nowPos + direct <0){
+            nowPos = songs.size-1
+        }
+        if(nowPos + direct >=songs.size){
+            nowPos = 0
+        }
+        timer.interrupt()
+        startTimer()
+        mediaPlayer?.release()
+        mediaPlayer =null
+        setPlayer(songs[nowPos])
+
+    }
     fun setPlayerStatus(isPlaying: Boolean) {
-        song.isPlaying = isPlaying
+        songs[nowPos].isPlaying = isPlaying
         timer.isPlaying=isPlaying
         if (isPlaying) {
             binding.songMiniplayerIv.visibility = View.GONE
@@ -51,31 +91,53 @@ class SongActivity : AppCompatActivity() {
     }
 
     private fun initSong() {
-        if (intent.hasExtra("title") && intent.hasExtra("singer")) {
-            song = Song(
-                intent.getStringExtra("title")!!,
-                intent.getStringExtra("singer")!!,
-                intent.getIntExtra("second",0)!!,
-                intent.getIntExtra("playTime",0)!!,
-                intent.getBooleanExtra("isPlaying",false)!!,
-                intent.getStringExtra("music")!!
-
-            )
-        }
+//        if (intent.hasExtra("title") && intent.hasExtra("singer")) {
+//            song = Song(
+//                intent.getStringExtra("title")!!,
+//                intent.getStringExtra("singer")!!,
+//                intent.getIntExtra("second",0)!!,
+//                intent.getIntExtra("playTime",0)!!,
+//                intent.getBooleanExtra("isPlaying",false)!!,
+//                intent.getStringExtra("music")!!
+//
+//            )
+//        }
+        val spf = getSharedPreferences("song", MODE_PRIVATE)
+        val songId = spf.getInt("songId",0)
+        nowPos = getPlayingSongPosition(songId)
         startTimer()
+        setPlayer(songs[nowPos])
+    }
+    private fun getPlayingSongPosition(songId :Int) : Int{
+        for(i in 0 until songs.size){
+            if(songs[i].id == songId){
+                return i
+            }
+        }
+        return 0
+    }
+    private fun initPlayList(){
+        songs.addAll(songDB.songDao().getSongs())
     }
     private fun setPlayer(song : Song){
-        binding.songMusicTitleTv.text = intent.getStringExtra("title")!!
-        binding.songSingerNameTv.text = intent.getStringExtra("singer")!!
+        binding.songMusicTitleTv.text = song.title
+        binding.songSingerNameTv.text = song.title
         binding.songStartTimeTv.text = String.format("%02d:%02d",song.second/60,song.second%60)
         binding.songEndTimeTv.text = String.format("%02d:%02d",song.playTime/60,song.playTime%60)
         binding.songProgressSb.progress = (song.second*1000 / song.playTime)
+        binding.songAlbumIv.setImageResource(song.coverImg!!)
         val music = resources.getIdentifier(song.music,"raw",this.packageName)
         mediaPlayer = MediaPlayer.create(this,music)
+        if(song.isLike){
+            binding.songLikeIv.setImageResource(R.drawable.ic_my_like_on)
+        }else{
+            binding.songLikeIv.setImageResource(R.drawable.ic_my_like_off)
+        }
+
         setPlayerStatus(song.isPlaying)
     }
     private fun startTimer(){
-        timer = Timer(song.playTime,song.isPlaying)
+        timer = Timer(songs[nowPos].playTime,songs[nowPos].isPlaying)
         timer.start()
     }
     inner class Timer(private val playTime : Int , var isPlaying : Boolean = true):Thread(){
@@ -113,11 +175,12 @@ class SongActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         setPlayerStatus(false)
-        song.second = ((binding.songProgressSb.progress*song.playTime)/100)/1000
+        songs[nowPos].second = ((binding.songProgressSb.progress*songs[nowPos].playTime)/100)/1000
+
         val sharedPreferences = getSharedPreferences("song", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        val songJson = gson.toJson(song)
-        editor.putString("songData",songJson)
+//        val songJson = gson.toJson(songs[nowPos])
+        editor.putInt("songId",songs[nowPos].id)
         editor.apply()
 
     }
@@ -126,5 +189,6 @@ class SongActivity : AppCompatActivity() {
         super.onDestroy()
         timer.interrupt()
         mediaPlayer?.release()
+        mediaPlayer =null
     }
 }
