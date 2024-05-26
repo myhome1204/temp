@@ -4,6 +4,7 @@ package com.example.week1
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.BoringLayout
 import android.util.Log
 import android.view.View
 import com.example.week1.databinding.ActivitySongBinding
@@ -41,6 +42,21 @@ class SongActivity : AppCompatActivity() {
         }
         binding.songPreviousIv.setOnClickListener {
             moveSong(-1)
+        }
+        binding.songLikeIv.setOnClickListener {
+            setLike(songs[nowPos].isLike)
+
+        }
+    }
+    private fun setLike(isLike : Boolean){
+        songs[nowPos].isLike = !isLike
+        songDB.songDao().updateIsLikeById(!isLike,songs[nowPos].id)
+        Log.d("song", "지금 노래의 제목${songs[nowPos].id} 좋아요 상태 :  ${songDB.songDao().getSong(songs[nowPos].id)!!.isLike}")
+
+        if(!isLike){
+            binding.songLikeIv.setImageResource(R.drawable.ic_my_like_on)
+        }else{
+            binding.songLikeIv.setImageResource(R.drawable.ic_my_like_off)
         }
     }
     private fun moveSong(direct : Int){
@@ -112,6 +128,12 @@ class SongActivity : AppCompatActivity() {
         binding.songAlbumIv.setImageResource(song.coverImg!!)
         val music = resources.getIdentifier(song.music,"raw",this.packageName)
         mediaPlayer = MediaPlayer.create(this,music)
+        if(song.isLike){
+            binding.songLikeIv.setImageResource(R.drawable.ic_my_like_on)
+        }else{
+            binding.songLikeIv.setImageResource(R.drawable.ic_my_like_off)
+        }
+
         setPlayerStatus(song.isPlaying)
     }
     private fun startTimer(){
