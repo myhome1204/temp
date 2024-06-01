@@ -39,7 +39,6 @@ class SavedSongRVAdapter :
     fun addSongs(songs: ArrayList<Song>) {
         this.songs.clear()
         this.songs.addAll(songs)
-
         notifyDataSetChanged()
     }
 

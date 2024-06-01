@@ -1,5 +1,6 @@
 package com.example.week1
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +13,8 @@ import com.google.gson.Gson
 
 class HomeFragment : Fragment() {
     private lateinit var binding:FragmentHomeBinding
-    private var AlbumDatas =ArrayList<Album>()
+    private var albumDatas =ArrayList<Album>()
+    private lateinit var songDB:  SongDatabase
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -46,15 +48,11 @@ class HomeFragment : Fragment() {
         bannerAdapter.addFragment(BannerFragment(R.drawable.img_home_viewpager_exp2))
         binding.homeBannerVp.adapter = bannerAdapter
         binding.homeBannerVp.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-        AlbumDatas.apply {
-            add(Album("Butter", "방탄소년단", R.drawable.img_album_exp))
-            add(Album("Next level", "에스파", R.drawable.img_album_exp3))
-            add(Album("Lilac", "아이유", R.drawable.img_album_exp2))
-            add(Album("Boy with Luv", "방탄소년단", R.drawable.img_album_exp4))
-            add(Album("BBoom BBoom", "모모랜드", R.drawable.img_album_exp5))
-            add(Album("Weekend", "태연", R.drawable.img_album_exp6))
-        }
-        val albumRVAdapter = AlbumRVAdapter(AlbumDatas)
+        songDB = SongDatabase.getInstance(requireContext())!!
+        albumDatas.addAll(songDB.albumDao().getAlbums())
+
+
+        val albumRVAdapter = AlbumRVAdapter(albumDatas)
         binding.homeTodayMusicAlbumRv.adapter = albumRVAdapter
         binding.homeTodayMusicAlbumRv.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
         albumRVAdapter.setMyItemClickListener(object :AlbumRVAdapter.MyItemClickListener{

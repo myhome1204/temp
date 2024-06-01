@@ -24,7 +24,6 @@ class SavedSongFragment: Fragment(){
 
         return binding.root
     }
-
     override fun onStart() {
         super.onStart()
         initRecyclerview()
@@ -34,16 +33,12 @@ class SavedSongFragment: Fragment(){
         binding.lockerSavedSongRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         Log.d("testt", "좋아요한 노래들은 "+songDB.toString())
         val songRVAdapter = SavedSongRVAdapter()
-
         songRVAdapter.setMyItemClickListener(object : SavedSongRVAdapter.MyItemClickListener{
             override fun onRemoveSong(songId: Int) {
                 songDB.songDao().updateIsLikeById(false,songId)
             }
-
         })
-
         binding.lockerSavedSongRecyclerView.adapter = songRVAdapter
-
         songRVAdapter.addSongs(songDB.songDao().getLikedSongs(true) as ArrayList<Song>)
         val _songList = songDB.songDao().getLikedSongs(true) as ArrayList<Song>
         Log.d("testt", "좋아요한 노래들은 "+_songList.toString())
