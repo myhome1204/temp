@@ -12,7 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Week1"
         tools:targetApi="34">
-
+        <activity
+            android:name=".SignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false" />
         <activity
             android:name=".SongActivity"
             android:exported="false" />

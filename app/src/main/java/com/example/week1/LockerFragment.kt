@@ -1,10 +1,12 @@
 package com.example.week1
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.week1.databinding.FragmentLockerBinding
 import com.google.android.material.tabs.TabLayoutMediator
@@ -28,7 +30,7 @@ class LockerFragment : Fragment() {
         }.attach()
 
         binding.lockerLoginTv.setOnClickListener {
-//            startActivity(Intent(activity, LoginActivity::class.java))
+            startActivity(Intent(activity, LoginActivity::class.java))
         }
 
         val songDB = SongDatabase.getInstance(requireContext())!!
@@ -38,5 +40,34 @@ class LockerFragment : Fragment() {
 //        Log.d("LOKERFRAG/GET_ALBUMS", likedAlbums.toString())
 
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        initViews()
+    }
+    private fun getJwt() : Int{
+        val spf = activity?.getSharedPreferences("auth",AppCompatActivity.MODE_PRIVATE)
+        return spf!!.getInt("jwt",0)
+    }
+    private fun initViews(){
+        val jwt = getJwt()
+        if(jwt==0){
+            binding.lockerLoginTv.text = "로그인"
+            binding.lockerLoginTv.setOnClickListener {
+                startActivity(Intent(activity,LoginActivity::class.java))
+            }
+        }else{
+            binding.lockerLoginTv.text = "로그아웃"
+            //로그아웃작업
+            logout()
+            startActivity(Intent(activity,MainActivity::class.java))
+        }
+    }
+    private fun logout(){
+        val spf = activity?.getSharedPreferences("auth",AppCompatActivity.MODE_PRIVATE)
+        val editor = spf!!.edit()
+        editor.remove("jwt")
+        editor.apply()
     }
 }
